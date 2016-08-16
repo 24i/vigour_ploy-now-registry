@@ -9,7 +9,8 @@
     "cover": "istanbul cover --report none --print detail test",
     "docs": "node_modules/vigour-doc/bin/vdoc",
     "travis": "npm run cover -s && istanbul report lcov && ((cat coverage/lcov.info | coveralls) || exit 0) && standard",
-    "perf-browser": "budo ./test/performance/index.js -p 8080 --live"
+    "perf-browser": "budo ./test/performance/index.js -p 8080 --live",
+    "start": "node lib/index"
   },
   "repository": {
     "type": "git",
