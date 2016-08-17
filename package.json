@@ -1,6 +1,6 @@
 {
   "name": "ploy-now-registry",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Returns list of existing now deployments with necessary metadata",
   "main": "./lib/index.js",
   "scripts": {
@@ -28,8 +28,7 @@
     "url": "https://github.com/vigour-io/ploy-now-registry/issues"
   },
   "homepage": "https://github.com/vigour-io/ploy-now-registry#readme",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "tape": "^4.4.0",
     "sinon": "^1.17.0",
