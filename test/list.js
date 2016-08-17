@@ -36,7 +36,7 @@ test('list - generate', t => {
   getPkg.withArgs(10).returns(Promise.resolve({ version: '1' }))
   getPkg.withArgs(99).returns(Promise.resolve({}))
 
-  list.get()
+  list.get('API-TOKEN')
     .then(list => {
       t.deepEqual(list, [
         {name: 's1', version: '1', url: 'u3.sh', created: 13},
