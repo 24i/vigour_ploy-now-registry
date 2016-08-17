@@ -17,3 +17,5 @@ deploy:
     on:
       branch: master
       tags: true
+after_deploy:
+  - bin/deploy
