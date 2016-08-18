@@ -24,27 +24,30 @@ test('list - generate', t => {
     { uid: 99, name: 's10', url: 'u99.sh', created: 11 } // no v
   ]))
 
-  getPkg.withArgs(1).returns(Promise.resolve({ version: '1' }))
-  getPkg.withArgs(2).returns(Promise.resolve({ version: '1' }))
-  getPkg.withArgs(3).returns(Promise.resolve({ version: '1' }))
-  getPkg.withArgs(4).returns(Promise.resolve({ version: '2' }))
-  getPkg.withArgs(5).returns(Promise.resolve({ version: '2' }))
-  getPkg.withArgs(6).returns(Promise.resolve({ version: '1' }))
-  getPkg.withArgs(7).returns(Promise.resolve({ version: '2' }))
-  getPkg.withArgs(8).returns(Promise.resolve({ version: '2' }))
-  getPkg.withArgs(9).returns(Promise.resolve({ version: '1' }))
-  getPkg.withArgs(10).returns(Promise.resolve({ version: '1' }))
+  getPkg.withArgs(1).returns(Promise.resolve({ version: '1', _env: 'a=b' }))
+  getPkg.withArgs(2).returns(Promise.resolve({ version: '1', _env: 'a=c' }))
+  getPkg.withArgs(3).returns(Promise.resolve({ version: '1', _env: 'a=b' }))
+  getPkg.withArgs(4).returns(Promise.resolve({ version: '2', _env: 'c=d' }))
+  getPkg.withArgs(5).returns(Promise.resolve({ version: '2', _env: 'a=b&c=d' }))
+  getPkg.withArgs(6).returns(Promise.resolve({ version: '1', _env: 'c=d' }))
+  getPkg.withArgs(7).returns(Promise.resolve({ version: '2', _env: 'a=b' }))
+  getPkg.withArgs(8).returns(Promise.resolve({ version: '2', _env: 'a=b&c=d' }))
+  getPkg.withArgs(9).returns(Promise.resolve({ version: '1', _env: 'a=b&c=d' }))
+  getPkg.withArgs(10).returns(Promise.resolve({ version: '1', _env: 'a=b&c=d' }))
   getPkg.withArgs(99).returns(Promise.resolve({}))
 
   list.get('API-TOKEN')
     .then(list => {
       t.deepEqual(list, [
-        {name: 's1', version: '1', url: 'u3.sh', created: 13},
-        {name: 's1', version: '2', url: 'u5.sh', created: 22},
-        {name: 's2', version: '1', url: 'u6.sh', created: 11},
-        {name: 's2', version: '2', url: 'u8.sh', created: 22},
-        {name: 's3', version: '1', url: 'u9.sh', created: 11},
-        {name: 's4', version: '1', url: 'u10.sh', created: 11}
+        {name: 's1', version: '1', env: 'a=b', url: 'u3.sh', created: 13},
+        {name: 's1', version: '1', env: 'a=c', url: 'u2.sh', created: 12},
+        {name: 's1', version: '2', env: 'c=d', url: 'u4.sh', created: 21},
+        {name: 's1', version: '2', env: 'a=b&c=d', url: 'u5.sh', created: 22},
+        {name: 's2', version: '1', env: 'c=d', url: 'u6.sh', created: 11},
+        {name: 's2', version: '2', env: 'a=b', url: 'u7.sh', created: 21},
+        {name: 's2', version: '2', env: 'a=b&c=d', url: 'u8.sh', created: 22},
+        {name: 's3', version: '1', env: 'a=b&c=d', url: 'u9.sh', created: 11},
+        {name: 's4', version: '1', env: 'a=b&c=d', url: 'u10.sh', created: 11}
       ], 'list is as expected')
       t.end()
 
