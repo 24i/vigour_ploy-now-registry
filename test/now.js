@@ -56,11 +56,11 @@ test('now client - get deployments list', t => {
 test('now client - get package.json not a json', t => {
   request
     .withArgs(Object.assign({
-      path: '/now/deployments/deployment-uid/files'
+      path: '/now/deployments/deployment-uid/links'
     }, httpsRequestOptions))
     .returns({end: () => {}})
     .callsArgWith(1, {on: (e, cb) => {
-      cb(e === 'data' && '[{"name": "package.json", "uid": "pkg-uid"}]')
+      cb(e === 'data' && '{"files": [{"file": "package.json", "sha": "pkg-uid"}]}')
     }})
 
   request
@@ -84,11 +84,11 @@ test('now client - get package.json not a json', t => {
 test('now client - get package.json', t => {
   request
     .withArgs(Object.assign({
-      path: '/now/deployments/deployment-uid/files'
+      path: '/now/deployments/deployment-uid/links'
     }, httpsRequestOptions))
     .returns({end: () => {}})
     .callsArgWith(1, {on: (e, cb) => {
-      cb(e === 'data' && '[{"name": "package.json", "uid": "pkg-uid"}]')
+      cb(e === 'data' && '{"files": [{"file": "package.json", "sha": "pkg-uid"}]}')
     }})
 
   request
