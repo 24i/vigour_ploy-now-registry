@@ -1,20 +1,14 @@
 'use strict'
 
-const path = require('path')
-const fs = require('fs')
-
 const command = require('../lib/command')
 const now = require('../lib/now')
 
+const pkg = require('../package.json')
 const dir = process.cwd()
-
-var pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json')))
-pkg._now_token = process.env.NOW_TOKEN
-fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(pkg, null, 2))
 
 now.setToken(process.env.NOW_TOKEN)
 
-command.run('now', dir)
+command.run(`now -e NOW_TOKEN=${process.env.NOW_TOKEN}`, dir)
   .then(() => now.getDeployments())
   .then(deployments => {
     const found = deployments.filter(d => d.name === pkg.name)
