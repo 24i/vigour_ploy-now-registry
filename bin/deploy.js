@@ -8,7 +8,7 @@ const dir = process.cwd()
 
 now.setToken(process.env.NOW_TOKEN)
 
-command.run(`now -e NOW_TOKEN=${process.env.NOW_TOKEN}`, dir)
+command.run(`now -N -e NOW_TOKEN=${process.env.NOW_TOKEN}`, dir)
   .then(() => now.getDeployments())
   .then(deployments => {
     const found = deployments.filter(d => d.name === pkg.name)
