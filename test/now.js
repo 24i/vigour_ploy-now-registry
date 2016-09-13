@@ -18,7 +18,9 @@ const httpsRequestOptions = {
 test('now client - catch connection error', t => {
   t.plan(1)
 
-  sinon.stub(https, 'request')
+  const request = sinon.stub(https, 'request')
+
+  request
     .withArgs(Object.assign({
       path: '/now/deployments'
     }, httpsRequestOptions))
@@ -41,7 +43,7 @@ test('now client - catch connection error', t => {
   now('deployments', 'API-TOKEN', 'deployments.*')
     .on('error', error => {
       t.equal(error, 'connection error', 'connection error caught')
-      https.request.restore()
+      request.restore()
     })
     .send()
 })
@@ -49,7 +51,9 @@ test('now client - catch connection error', t => {
 test('now client - get deployments list', t => {
   t.plan(2)
 
-  sinon.stub(https, 'request')
+  const request = sinon.stub(https, 'request')
+
+  request
     .withArgs(Object.assign({
       path: '/now/deployments'
     }, httpsRequestOptions))
@@ -79,7 +83,7 @@ test('now client - get deployments list', t => {
       t.equal(dep.name, 'a', 'deployment name is "a"')
     })
     .on('end', () => {
-      https.request.restore()
+      request.restore()
     })
     .send()
 })
@@ -87,7 +91,9 @@ test('now client - get deployments list', t => {
 test('now client - get package.json not a json', t => {
   t.plan(1)
 
-  sinon.stub(https, 'request')
+  const request = sinon.stub(https, 'request')
+
+  request
     .withArgs(Object.assign({
       path: '/now/deployments'
     }, httpsRequestOptions))
@@ -111,7 +117,7 @@ test('now client - get package.json not a json', t => {
   now('deployments', 'API-TOKEN')
     .on('error', err => {
       t.equal(/^Invalid JSON/.test(err.message), true, 'returns JSON Parse Error')
-      https.request.restore()
+      request.restore()
     })
     .send()
 })
@@ -131,6 +137,9 @@ test('now client - get package.json', t => {
         if (e === 'response') {
           return cb({
             on: (e, cb) => {
+              if (e === 'end') {
+                return setTimeout(cb, 0)
+              }
             },
             pipe: (parser) => {
               setTimeout(parser.write.bind(parser), 0, '{"files": [{"file": "package.json", "sha": "pkg-uid"}]}')
@@ -152,6 +161,9 @@ test('now client - get package.json', t => {
         if (e === 'response') {
           return cb({
             on: (e, cb) => {
+              if (e === 'end') {
+                return setTimeout(cb, 0)
+              }
             },
             pipe: (parser) => {
               setTimeout(parser.write.bind(parser), 0, '{"version": "1.1.1"}')
@@ -177,7 +189,7 @@ test('now client - get package.json', t => {
       t.equal(pkg.version, '1.1.1', 'version is 1.1.1')
     })
     .on('end', () => {
-      https.request.restore()
+      request.restore()
     })
     .send()
 })
