@@ -43,6 +43,7 @@ test('now client - catch connection error', t => {
       t.equal(error, 'connection error', 'connection error caught')
       https.request.restore()
     })
+    .send()
 })
 
 test('now client - get deployments list', t => {
@@ -80,6 +81,7 @@ test('now client - get deployments list', t => {
     .on('end', () => {
       https.request.restore()
     })
+    .send()
 })
 
 test('now client - get package.json not a json', t => {
@@ -111,6 +113,7 @@ test('now client - get package.json not a json', t => {
       t.equal(/^Invalid JSON/.test(err.message), true, 'returns JSON Parse Error')
       https.request.restore()
     })
+    .send()
 })
 
 test('now client - get package.json', t => {
@@ -166,6 +169,7 @@ test('now client - get package.json', t => {
       t.equal(file.file, 'package.json', 'file name is "package.json"')
       t.equal(file.sha, 'pkg-uid', 'file sha is "pkg-uid"')
     })
+    .send()
 
   now('deployments/deployment-uid/files/pkg-uid', 'API-TOKEN', false)
     .on('data', pkg => {
@@ -175,4 +179,5 @@ test('now client - get package.json', t => {
     .on('end', () => {
       https.request.restore()
     })
+    .send()
 })
