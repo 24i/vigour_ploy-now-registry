@@ -7,6 +7,8 @@ const sinon = require('sinon')
 const now = { api: () => {} }
 
 test('list - generate', t => {
+  t.plan(1)
+
   const nowApi = sinon.stub(now, 'api')
   nowApi['@global'] = true
   const state = proxyquire('../lib/state', { '../now': nowApi })
@@ -102,33 +104,34 @@ test('list - generate', t => {
     .returns(generateEmitter([ { file: 'package.json', sha: 99 } ]))
   nowApi
     .withArgs('deployments/99/files/99', 'API-TOKEN', false)
-    .returns(generateEmitter([ {} ]))
+    .returns(generateEmitter(null, new Error('Invalid JSON')))
 
   state.start('API-TOKEN')
 
-  /*
-  list.get('API-TOKEN')
-    .then(list => {
+  state.subscribe({ registry: { val: true } }, (val, type) => {
+    if (type === 'update') {
+      state.stop()
+      var list = []
+      val.each(d => {
+        list.push(d.serialize())
+      })
       t.deepEqual(list, [
+        {name: 's1', version: '2', env: 'a=b&c=d', url: 'u5.sh', created: 22},
+        {name: 's2', version: '2', env: 'a=b&c=d', url: 'u8.sh', created: 22},
+        {name: 's1', version: '2', env: 'c=d', url: 'u4.sh', created: 21},
+        {name: 's2', version: '2', env: 'a=b', url: 'u7.sh', created: 21},
         {name: 's1', version: '1', env: 'a=b', url: 'u3.sh', created: 13},
         {name: 's1', version: '1', env: 'a=c', url: 'u2.sh', created: 12},
-        {name: 's1', version: '2', env: 'c=d', url: 'u4.sh', created: 21},
-        {name: 's1', version: '2', env: 'a=b&c=d', url: 'u5.sh', created: 22},
         {name: 's2', version: '1', env: 'c=d', url: 'u6.sh', created: 11},
-        {name: 's2', version: '2', env: 'a=b', url: 'u7.sh', created: 21},
-        {name: 's2', version: '2', env: 'a=b&c=d', url: 'u8.sh', created: 22},
         {name: 's3', version: '1', env: 'a=b&c=d', url: 'u9.sh', created: 11},
         {name: 's4', version: '1', env: 'a=b&c=d', url: 'u10.sh', created: 11}
-      ], 'list is as expected')
-      t.end()
-
-      now.getDeployments.restore()
-      now.getPkg.restore()
-    })
-  */
+      ], 'registry is as expected')
+      nowApi.restore()
+    }
+  })
 })
 
-function generateEmitter (data) {
+function generateEmitter (data, error) {
   var cbs = {}
 
   const emitter = {
@@ -141,9 +144,21 @@ function generateEmitter (data) {
       return emitter
     },
     send: () => {
-      data.forEach((d) => cbs['data'](d))
-      cbs['end']()
-      return emitter
+      setTimeout(() => {
+        if (data) {
+          data.forEach((d) => cbs['data'](d))
+        }
+        if (error && cbs.error) {
+          cbs.error(error)
+        }
+        if (cbs.end) {
+          cbs.end()
+        }
+        return emitter
+      }, 0)
+    },
+    abort: () => {
+      cbs = {}
     }
   }
 
