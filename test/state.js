@@ -11,61 +11,102 @@ test('list - generate', t => {
   nowApi['@global'] = true
   const state = proxyquire('../lib/state', { '../now': nowApi })
 
-  var cbs = {}
-  var emitter = {
-    on: (e, cb) => {
-      cbs[e] = cb
-      return emitter
-    },
-    once: (e, cb) => {
-      cbs[e] = cb
-      return emitter
-    },
-    send: () => {
-      cbs['data']({ uid: 1, name: 's1', url: 'u1.sh', created: 11 })
-      cbs['data']({ uid: 2, name: 's1', url: 'u2.sh', created: 12 })
-      cbs['data']({ uid: 3, name: 's1', url: 'u3.sh', created: 13 })
-      cbs['data']({ uid: 4, name: 's1', url: 'u4.sh', created: 21 })
-      cbs['data']({ uid: 5, name: 's1', url: 'u5.sh', created: 22 })
-      cbs['data']({ uid: 6, name: 's2', url: 'u6.sh', created: 11 })
-      cbs['data']({ uid: 7, name: 's2', url: 'u7.sh', created: 21 })
-      cbs['data']({ uid: 8, name: 's2', url: 'u8.sh', created: 22 })
-      cbs['data']({ uid: 9, name: 's3', url: 'u9.sh', created: 11 })
-      cbs['data']({ uid: 10, name: 's4', url: 'u10.sh', created: 11 })
-      cbs['data']({ uid: 99, name: 's10', url: 'u99.sh', created: 11 })
-      cbs['end']()
-      return emitter
-    }
-  }
-
   nowApi
     .withArgs('deployments', 'API-TOKEN', 'deployments.*')
-    .returns(emitter)
+    .returns(generateEmitter([
+      { uid: 1, name: 's1', url: 'u1.sh', created: 11 }, // v1
+      { uid: 2, name: 's1', url: 'u2.sh', created: 12 }, // v1
+      { uid: 3, name: 's1', url: 'u3.sh', created: 13 }, // v1
+      { uid: 4, name: 's1', url: 'u4.sh', created: 21 }, // v2
+      { uid: 5, name: 's1', url: 'u5.sh', created: 22 }, // v2
+      { uid: 6, name: 's2', url: 'u6.sh', created: 11 }, // v1
+      { uid: 7, name: 's2', url: 'u7.sh', created: 21 }, // v2
+      { uid: 8, name: 's2', url: 'u8.sh', created: 22 }, // v2
+      { uid: 9, name: 's3', url: 'u9.sh', created: 11 }, // v1
+      { uid: 10, name: 's4', url: 'u10.sh', created: 11 }, // v1
+      { uid: 99, name: 's10', url: 'u99.sh', created: 11 } // no v
+    ]))
+
+  nowApi
+    .withArgs('deployments/1/links', 'API-TOKEN', 'files.*')
+    .returns(generateEmitter([ { file: 'package.json', sha: 1 } ]))
+  nowApi
+    .withArgs('deployments/1/files/1', 'API-TOKEN', false)
+    .returns(generateEmitter([ { version: '1', _env: 'a=b' } ]))
+
+  nowApi
+    .withArgs('deployments/2/links', 'API-TOKEN', 'files.*')
+    .returns(generateEmitter([ { file: 'package.json', sha: 2 } ]))
+  nowApi
+    .withArgs('deployments/2/files/2', 'API-TOKEN', false)
+    .returns(generateEmitter([ { version: '1', _env: 'a=c' } ]))
+
+  nowApi
+    .withArgs('deployments/3/links', 'API-TOKEN', 'files.*')
+    .returns(generateEmitter([ { file: 'package.json', sha: 3 } ]))
+  nowApi
+    .withArgs('deployments/3/files/3', 'API-TOKEN', false)
+    .returns(generateEmitter([ { version: '1', _env: 'a=b' } ]))
+
+  nowApi
+    .withArgs('deployments/4/links', 'API-TOKEN', 'files.*')
+    .returns(generateEmitter([ { file: 'package.json', sha: 4 } ]))
+  nowApi
+    .withArgs('deployments/4/files/4', 'API-TOKEN', false)
+    .returns(generateEmitter([ { version: '2', _env: 'c=d' } ]))
+
+  nowApi
+    .withArgs('deployments/5/links', 'API-TOKEN', 'files.*')
+    .returns(generateEmitter([ { file: 'package.json', sha: 5 } ]))
+  nowApi
+    .withArgs('deployments/5/files/5', 'API-TOKEN', false)
+    .returns(generateEmitter([ { version: '2', _env: 'a=b&c=d' } ]))
+
+  nowApi
+    .withArgs('deployments/6/links', 'API-TOKEN', 'files.*')
+    .returns(generateEmitter([ { file: 'package.json', sha: 6 } ]))
+  nowApi
+    .withArgs('deployments/6/files/6', 'API-TOKEN', false)
+    .returns(generateEmitter([ { version: '1', _env: 'c=d' } ]))
+
+  nowApi
+    .withArgs('deployments/7/links', 'API-TOKEN', 'files.*')
+    .returns(generateEmitter([ { file: 'package.json', sha: 7 } ]))
+  nowApi
+    .withArgs('deployments/7/files/7', 'API-TOKEN', false)
+    .returns(generateEmitter([ { version: '2', _env: 'a=b' } ]))
+
+  nowApi
+    .withArgs('deployments/8/links', 'API-TOKEN', 'files.*')
+    .returns(generateEmitter([ { file: 'package.json', sha: 8 } ]))
+  nowApi
+    .withArgs('deployments/8/files/8', 'API-TOKEN', false)
+    .returns(generateEmitter([ { version: '2', _env: 'a=b&c=d' } ]))
+
+  nowApi
+    .withArgs('deployments/9/links', 'API-TOKEN', 'files.*')
+    .returns(generateEmitter([ { file: 'package.json', sha: 9 } ]))
+  nowApi
+    .withArgs('deployments/9/files/9', 'API-TOKEN', false)
+    .returns(generateEmitter([ { version: '1', _env: 'a=b&c=d' } ]))
+
+  nowApi
+    .withArgs('deployments/10/links', 'API-TOKEN', 'files.*')
+    .returns(generateEmitter([ { file: 'package.json', sha: 10 } ]))
+  nowApi
+    .withArgs('deployments/10/files/10', 'API-TOKEN', false)
+    .returns(generateEmitter([ { version: '1', _env: 'a=b&c=d' } ]))
+
+  nowApi
+    .withArgs('deployments/99/links', 'API-TOKEN', 'files.*')
+    .returns(generateEmitter([ { file: 'package.json', sha: 99 } ]))
+  nowApi
+    .withArgs('deployments/99/files/99', 'API-TOKEN', false)
+    .returns(generateEmitter([ {} ]))
 
   state.start('API-TOKEN')
 
   /*
-  getDeployments.returns(Promise.resolve([
-    { uid: 1, name: 's1', url: 'u1.sh', created: 11 }, // v1
-    { uid: 2, name: 's1', url: 'u2.sh', created: 12 }, // v1
-    { uid: 3, name: 's1', url: 'u3.sh', created: 13 }, // v1
-    { uid: 4, name: 's1', url: 'u4.sh', created: 21 }, // v2
-    { uid: 5, name: 's1', url: 'u5.sh', created: 22 }, // v2
-    { uid: 6, name: 's2', url: 'u6.sh', created: 11 }, // v1
-    { uid: 7, name: 's2', url: 'u7.sh', created: 21 }, // v2
-    { uid: 8, name: 's2', url: 'u8.sh', created: 22 }, // v2
-    { uid: 9, name: 's3', url: 'u9.sh', created: 11 }, // v1
-    { uid: 10, name: 's4', url: 'u10.sh', created: 11 }, // v1
-    { uid: 99, name: 's10', url: 'u99.sh', created: 11 } // no v
-  ]))
-
-  getPkg.withArgs(6).returns(Promise.resolve({ version: '1', _env: 'c=d' }))
-  getPkg.withArgs(7).returns(Promise.resolve({ version: '2', _env: 'a=b' }))
-  getPkg.withArgs(8).returns(Promise.resolve({ version: '2', _env: 'a=b&c=d' }))
-  getPkg.withArgs(9).returns(Promise.resolve({ version: '1', _env: 'a=b&c=d' }))
-  getPkg.withArgs(10).returns(Promise.resolve({ version: '1', _env: 'a=b&c=d' }))
-  getPkg.withArgs(99).returns(Promise.resolve({}))
-
   list.get('API-TOKEN')
     .then(list => {
       t.deepEqual(list, [
@@ -86,3 +127,25 @@ test('list - generate', t => {
     })
   */
 })
+
+function generateEmitter (data) {
+  var cbs = {}
+
+  const emitter = {
+    on: (e, cb) => {
+      cbs[e] = cb
+      return emitter
+    },
+    once: (e, cb) => {
+      cbs[e] = cb
+      return emitter
+    },
+    send: () => {
+      data.forEach((d) => cbs['data'](d))
+      cbs['end']()
+      return emitter
+    }
+  }
+
+  return emitter
+}
