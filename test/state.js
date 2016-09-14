@@ -111,11 +111,7 @@ test('list - generate', t => {
   state.subscribe({ registry: { val: true } }, (val, type) => {
     if (type === 'update') {
       state.stop()
-      var list = []
-      val.each(d => {
-        list.push(d.serialize())
-      })
-      t.deepEqual(list, [
+      t.deepEqual(val.keys().map(k => val[k].serialize()), [
         {name: 's1', version: '2', env: 'a=b&c=d', url: 'u5.sh', created: 22},
         {name: 's2', version: '2', env: 'a=b&c=d', url: 'u8.sh', created: 22},
         {name: 's1', version: '2', env: 'c=d', url: 'u4.sh', created: 21},
