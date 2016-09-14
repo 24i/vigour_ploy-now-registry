@@ -5,20 +5,23 @@ const now = require('../lib/now')
 
 const pkg = require('../package.json')
 const dir = process.cwd()
+const timestamp = +(new Date())
 
-now.setToken(process.env.NOW_TOKEN)
+command.run(`now -N -e NOW_TOKEN=${process.env.NOW_TOKEN}`, dir)
+  .then(() => new Promise((resolve, reject) => {
+    console.log('Deployed to now, discovering to alias...')
 
-command.run(`now -e NOW_TOKEN=${process.env.NOW_TOKEN}`, dir)
-  .then(() => now.getDeployments())
-  .then(deployments => {
-    const found = deployments.filter(d => d.name === pkg.name)
-      .sort((d1, d2) => d1.created - d2.created)
-      .pop()
-
-    if (!found) {
-      throw new Error('Could not find own deployment')
-    }
-
+    now('deployments', process.env.NOW_TOKEN, 'deployments.*')
+      .on('data', deployment => {
+        if (deployment.name === pkg.name && deployment.created > timestamp) {
+          resolve(deployment)
+        }
+      })
+      .on('error', err => reject(err))
+      .on('end', () => reject('Could not find own deployment'))
+      .send()
+  }))
+  .then(found => {
     return command.run(`now alias set ${found.uid} ${process.env.REGISTRY_HOST}`, dir)
   })
   .catch(error => {

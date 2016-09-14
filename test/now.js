@@ -15,100 +15,181 @@ const httpsRequestOptions = {
   }
 }
 
-const request = sinon.stub(https, 'request')
-
 test('now client - catch connection error', t => {
+  t.plan(1)
+
+  const request = sinon.stub(https, 'request')
+
   request
     .withArgs(Object.assign({
       path: '/now/deployments'
     }, httpsRequestOptions))
-    .returns({end: () => {}, on: (e, cb) => {
-      cb('connection error')
-    }})
-
-  now.setToken('API-TOKEN')
-  now.getDeployments()
-    .catch(error => {
-      t.equal(error, 'connection error', 'connection error caught')
-      t.end()
+    .returns({
+      end: () => {},
+      on: (e, cb) => {
+        if (e === 'error') {
+          return setTimeout(cb, 0, 'connection error')
+        }
+        if (e === 'response') {
+          return cb({
+            on: (e, cb) => {},
+            pipe: (parser) => parser
+          })
+        }
+      },
+      abort: () => {}
     })
+
+  now('deployments', 'API-TOKEN', 'deployments.*')
+    .on('error', error => {
+      t.equal(error, 'connection error', 'connection error caught')
+      request.restore()
+    })
+    .send()
 })
 
 test('now client - get deployments list', t => {
+  t.plan(2)
+
+  const request = sinon.stub(https, 'request')
+
   request
     .withArgs(Object.assign({
       path: '/now/deployments'
     }, httpsRequestOptions))
-    .returns({end: () => {}})
-    .callsArgWith(1, {on: (e, cb) => {
-      cb(e === 'data' && '{"deployments": []}')
-    }})
-
-  now.setToken('API-TOKEN')
-  now.getDeployments()
-    .then(list => {
-      t.equal(list.constructor, Array, 'deployments is an array')
-      t.equal(list.length, 0, 'with zero items')
-      t.end()
+    .returns({
+      end: () => {},
+      on: (e, cb) => {
+        if (e === 'response') {
+          return cb({
+            on: (e, cb) => {
+              if (e === 'end') {
+                return setTimeout(cb, 0)
+              }
+            },
+            pipe: (parser) => {
+              setTimeout(parser.write.bind(parser), 0, '{"deployments":[{"name":"a"}]}')
+              return parser
+            }
+          })
+        }
+      },
+      abort: () => {}
     })
+
+  now('deployments', 'API-TOKEN', 'deployments.*')
+    .on('data', dep => {
+      t.equal(dep.constructor, Object, 'deployment is an object')
+      t.equal(dep.name, 'a', 'deployment name is "a"')
+    })
+    .on('end', () => {
+      request.restore()
+    })
+    .send()
 })
 
 test('now client - get package.json not a json', t => {
-  request
-    .withArgs(Object.assign({
-      path: '/now/deployments/deployment-uid/links'
-    }, httpsRequestOptions))
-    .returns({end: () => {}})
-    .callsArgWith(1, {on: (e, cb) => {
-      cb(e === 'data' && '{"files": [{"file": "package.json", "sha": "pkg-uid"}]}')
-    }})
+  t.plan(1)
+
+  const request = sinon.stub(https, 'request')
 
   request
     .withArgs(Object.assign({
-      path: '/now/deployments/deployment-uid/files/pkg-uid'
+      path: '/now/deployments'
     }, httpsRequestOptions))
-    .returns({end: () => {}})
-    .callsArgWith(1, {on: (e, cb) => {
-      cb(e === 'data' && 'not a valid json')
-    }})
-
-  now.setToken('API-TOKEN')
-  now.getPkg('deployment-uid')
-    .then(pkg => {
-      t.equal(pkg.constructor, Object, 'package.json is an object')
-      t.notok(pkg.version, 'no version exists')
-      t.end()
+    .returns({
+      end: () => {},
+      on: (e, cb) => {
+        if (e === 'response') {
+          return cb({
+            on: (e, cb) => {
+            },
+            pipe: (parser) => {
+              setTimeout(parser.write.bind(parser), 0, 'not a json')
+              return parser
+            }
+          })
+        }
+      },
+      abort: () => {}
     })
+
+  now('deployments', 'API-TOKEN')
+    .on('error', err => {
+      t.equal(/^Invalid JSON/.test(err.message), true, 'returns JSON Parse Error')
+      request.restore()
+    })
+    .send()
 })
 
 test('now client - get package.json', t => {
+  t.plan(5)
+
+  const request = sinon.stub(https, 'request')
+
   request
     .withArgs(Object.assign({
       path: '/now/deployments/deployment-uid/links'
     }, httpsRequestOptions))
-    .returns({end: () => {}})
-    .callsArgWith(1, {on: (e, cb) => {
-      cb(e === 'data' && '{"files": [{"file": "package.json", "sha": "pkg-uid"}]}')
-    }})
+    .returns({
+      end: () => {},
+      on: (e, cb) => {
+        if (e === 'response') {
+          return cb({
+            on: (e, cb) => {
+              if (e === 'end') {
+                return setTimeout(cb, 0)
+              }
+            },
+            pipe: (parser) => {
+              setTimeout(parser.write.bind(parser), 0, '{"files": [{"file": "package.json", "sha": "pkg-uid"}]}')
+              return parser
+            }
+          })
+        }
+      },
+      abort: () => {}
+    })
 
   request
     .withArgs(Object.assign({
       path: '/now/deployments/deployment-uid/files/pkg-uid'
     }, httpsRequestOptions))
-    .returns({end: () => {}})
-    .callsArgWith(1, {on: (e, cb) => {
-      cb(e === 'data' && '{"version": "1.1.1"}')
-    }})
+    .returns({
+      end: () => {},
+      on: (e, cb) => {
+        if (e === 'response') {
+          return cb({
+            on: (e, cb) => {
+              if (e === 'end') {
+                return setTimeout(cb, 0)
+              }
+            },
+            pipe: (parser) => {
+              setTimeout(parser.write.bind(parser), 0, '{"version": "1.1.1"}')
+              return parser
+            }
+          })
+        }
+      },
+      abort: () => {}
+    })
 
-  now.setToken('API-TOKEN')
-  now.getPkg('deployment-uid')
-    .then(pkg => {
+  now('deployments/deployment-uid/links', 'API-TOKEN', 'files.*')
+    .on('data', file => {
+      t.equal(file.constructor, Object, 'file is an object')
+      t.equal(file.file, 'package.json', 'file name is "package.json"')
+      t.equal(file.sha, 'pkg-uid', 'file sha is "pkg-uid"')
+    })
+    .send()
+
+  now('deployments/deployment-uid/files/pkg-uid', 'API-TOKEN', false)
+    .on('data', pkg => {
       t.equal(pkg.constructor, Object, 'package.json is an object')
       t.equal(pkg.version, '1.1.1', 'version is 1.1.1')
-      t.end()
     })
-})
-
-test.onFinish(() => {
-  https.request.restore()
+    .on('end', () => {
+      request.restore()
+    })
+    .send()
 })
