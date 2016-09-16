@@ -30,6 +30,7 @@
   "dependencies": {
     "JSONStream": "^1.0.0",
     "monotonic-timestamp": "0.0.9",
+    "observe-now": "0.2.0",
     "vigour-stamp": "^1.4.0",
     "vigour-state": "^4.0.0"
   },
@@ -45,6 +46,5 @@
     "pre-commit": "^1.1.3",
     "now": "0.25.1",
     "proxyquire": "^1.7.10"
-  },
-  "interval": 4000
+  }
 }

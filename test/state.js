@@ -11,7 +11,7 @@ test('list - generate', t => {
 
   const nowApi = sinon.stub(now, 'api')
   nowApi['@global'] = true
-  const state = proxyquire('../lib/state', { '../now': nowApi })
+  const state = proxyquire('../lib/state', { 'observe-now': nowApi })
 
   nowApi
     .withArgs('deployments', 'API-TOKEN', 'deployments.*')

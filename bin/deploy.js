@@ -1,8 +1,8 @@
 'use strict'
 
-const command = require('../lib/command')
-const now = require('../lib/now')
+const now = require('observe-now')
 
+const command = require('../lib/command')
 const pkg = require('../package.json')
 const dir = process.cwd()
 const timestamp = +(new Date())
