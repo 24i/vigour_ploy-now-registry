@@ -131,15 +131,15 @@ function generateEmitter (data, error) {
   var cbs = {}
 
   const emitter = {
-    on: (e, cb) => {
+    on (e, cb) {
       cbs[e] = cb
       return emitter
     },
-    once: (e, cb) => {
+    once (e, cb) {
       cbs[e] = cb
       return emitter
     },
-    send: () => {
+    send () {
       setTimeout(() => {
         if (data) {
           data.forEach((d) => cbs['data'](d))
@@ -153,8 +153,11 @@ function generateEmitter (data, error) {
         return emitter
       }, 0)
     },
-    abort: () => {
+    abort () {
       cbs = {}
+    },
+    remove () {
+
     }
   }
 
