@@ -7,7 +7,7 @@ const pkg = require('../package.json')
 const dir = process.cwd()
 const timestamp = +(new Date())
 
-command.run(`now -N -e NOW_TOKEN=${process.env.NOW_TOKEN} -e NODE_ENV="production"`, dir)
+command.run(`now -N -e NOW_TOKEN=${process.env.NOW_TOKEN} -e NODE_ENV=production`, dir)
   .then(() => new Promise((resolve, reject) => {
     console.log('Deployed to now, discovering to alias...')
 
