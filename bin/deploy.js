@@ -16,3 +16,4 @@ const registry = now.deploy(process.cwd(), { NOW_TOKEN: process.env.NOW_TOKEN },
   .on('error', error => {
     console.error('Deployment failed due to error: %j, stack: %s', error, error ? error.stack : '(no stack)')
   })
+  .deploy()
