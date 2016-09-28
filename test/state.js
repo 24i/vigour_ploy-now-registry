@@ -1,20 +1,18 @@
 'use strict'
 
 const test = require('tape')
-const proxyquire = require('proxyquire')
 const sinon = require('sinon')
+const now = require('observe-now')
 
-const now = { api: () => {} }
+const state = require('../lib/state')
 
 test('list - generate', t => {
   t.plan(1)
 
-  const nowApi = sinon.stub(now, 'api')
-  nowApi['@global'] = true
-  const state = proxyquire('../lib/state', { 'observe-now': nowApi })
+  const nowApi = sinon.stub(now, 'get')
 
   nowApi
-    .withArgs('deployments', 'API-TOKEN', 'deployments.*')
+    .withArgs('list', 'API-TOKEN', 'deployments.*')
     .returns(generateEmitter([
       { uid: 1, name: 's1', url: 'u1.sh', created: 11 }, // v1
       { uid: 2, name: 's1', url: 'u2.sh', created: 12 }, // v1
