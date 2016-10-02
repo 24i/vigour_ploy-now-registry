@@ -106,23 +106,21 @@ test('list - generate', t => {
 
   state.start('API-TOKEN')
 
-  state.subscribe({ registry: { val: true } }, (val, type) => {
-    if (type === 'update') {
-      state.stop()
-      t.deepEqual(val.keys().map(k => val[k].serialize()), [
-        {name: 's1', version: '2', env: 'a=b&c=d', url: 'u5.sh', created: 22},
-        {name: 's2', version: '2', env: 'a=b&c=d', url: 'u8.sh', created: 22},
-        {name: 's1', version: '2', env: 'c=d', url: 'u4.sh', created: 21},
-        {name: 's2', version: '2', env: 'a=b', url: 'u7.sh', created: 21},
-        {name: 's1', version: '1', env: 'a=b', url: 'u3.sh', created: 13},
-        {name: 's1', version: '1', env: 'a=c', url: 'u2.sh', created: 12},
-        {name: 's2', version: '1', env: 'c=d', url: 'u6.sh', created: 11},
-        {name: 's3', version: '1', env: 'a=b&c=d', url: 'u9.sh', created: 11},
-        {name: 's4', version: '1', env: 'a=b&c=d', url: 'u10.sh', created: 11}
-      ], 'registry is as expected')
-      nowApi.restore()
-    }
-  })
+  setTimeout(() => {
+    t.deepEqual(state.registry, [
+      {name: 's1', version: '2', env: 'a=b&c=d', url: 'u5.sh', created: 22},
+      {name: 's2', version: '2', env: 'a=b&c=d', url: 'u8.sh', created: 22},
+      {name: 's1', version: '2', env: 'c=d', url: 'u4.sh', created: 21},
+      {name: 's2', version: '2', env: 'a=b', url: 'u7.sh', created: 21},
+      {name: 's1', version: '1', env: 'a=b', url: 'u3.sh', created: 13},
+      {name: 's1', version: '1', env: 'a=c', url: 'u2.sh', created: 12},
+      {name: 's2', version: '1', env: 'c=d', url: 'u6.sh', created: 11},
+      {name: 's3', version: '1', env: 'a=b&c=d', url: 'u9.sh', created: 11},
+      {name: 's4', version: '1', env: 'a=b&c=d', url: 'u10.sh', created: 11}
+    ], 'registry is as expected')
+    state.stop()
+    nowApi.restore()
+  }, 500)
 })
 
 function generateEmitter (data, error) {
