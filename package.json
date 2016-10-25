@@ -31,7 +31,6 @@
     "JSONStream": "^1.0.0",
     "monotonic-timestamp": "0.0.9",
     "observe-now": "^1.0.0",
-    "vigour-stamp": "^1.4.0",
     "vigour-state": "^4.0.0"
   },
   "devDependencies": {
