@@ -136,9 +136,9 @@ function generateEmitter (data, error) {
       return emitter
     },
     send () {
-      setTimeout(() => {
+      setImmediate(() => {
         if (data) {
-          data.forEach((d) => cbs['data'](d))
+          data.forEach(d => cbs['data'](d))
         }
         if (error && cbs.error) {
           cbs.error(error)
@@ -146,8 +146,8 @@ function generateEmitter (data, error) {
         if (cbs.end) {
           cbs.end()
         }
-        return emitter
-      }, 0)
+      })
+      return emitter
     },
     abort () {
       cbs = {}
