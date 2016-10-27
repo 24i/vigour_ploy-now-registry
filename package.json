@@ -1,6 +1,6 @@
 {
   "name": "@vigour-io/ploy-now-registry",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "Returns list of existing now deployments with necessary metadata",
   "main": "./lib/index.js",
   "scripts": {
@@ -29,6 +29,7 @@
   "homepage": "https://github.com/vigour-io/ploy-now-registry#readme",
   "dependencies": {
     "JSONStream": "^1.0.0",
+    "concurrent-task": "^1.0.0",
     "monotonic-timestamp": "0.0.9",
     "observe-now": "^1.0.0",
     "vigour-state": "^4.0.0"
