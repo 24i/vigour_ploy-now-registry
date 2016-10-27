@@ -29,7 +29,7 @@
   "homepage": "https://github.com/vigour-io/ploy-now-registry#readme",
   "dependencies": {
     "JSONStream": "^1.0.0",
-    "concurrent-task": "^1.0.0",
+    "concurrent-task": "^2.0.0",
     "monotonic-timestamp": "0.0.9",
     "observe-now": "^1.0.0",
     "vigour-state": "^4.0.0"
