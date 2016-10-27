@@ -1,6 +1,6 @@
 {
   "name": "@vigour-io/ploy-now-registry",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "Returns list of existing now deployments with necessary metadata",
   "main": "./lib/index.js",
   "scripts": {
