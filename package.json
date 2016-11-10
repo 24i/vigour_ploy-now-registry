@@ -29,9 +29,11 @@
   "homepage": "https://github.com/vigour-io/ploy-now-registry#readme",
   "dependencies": {
     "JSONStream": "^1.0.0",
+    "blend-state-dynamo": "^3.0.0",
+    "brisky-hub": "^1.1.0",
     "concurrent-task": "^2.0.0",
     "monotonic-timestamp": "0.0.9",
-    "observe-now": "^1.0.0",
+    "observe-now": "^2.0.0",
     "vigour-state": "^4.0.0"
   },
   "devDependencies": {
