@@ -2,13 +2,24 @@
 
 const test = require('tape')
 const sinon = require('sinon')
+const proxyquire = require('proxyquire')
 const now = require('observe-now')
-
-const state = require('../lib/state')
 
 test('list - generate', t => {
   t.plan(1)
 
+  const hub = proxyquire('../lib/hub', {
+    'blend-state-dynamo': {
+      '@noCallThru': true,
+      properties: {
+        db: {
+          define: {
+            load: () => Promise.resolve()
+          }
+        }
+      }
+    }
+  })
   const nowApi = sinon.stub(now, 'get')
 
   nowApi
@@ -104,36 +115,38 @@ test('list - generate', t => {
     .withArgs('deployments/99/files/99', 'API-TOKEN', false)
     .returns(generateEmitter(null, new Error('Invalid JSON')))
 
-  state.start('API-TOKEN')
+  hub.start('API-TOKEN')
 
-  setTimeout(() => {
-    t.deepEqual(state.registry, [
-      {name: 's1', version: '2', env: 'a=b&c=d', url: 'u5.sh', created: 22},
-      {name: 's2', version: '2', env: 'a=b&c=d', url: 'u8.sh', created: 22},
-      {name: 's1', version: '2', env: 'c=d', url: 'u4.sh', created: 21},
-      {name: 's2', version: '2', env: 'a=b', url: 'u7.sh', created: 21},
-      {name: 's1', version: '1', env: 'a=b', url: 'u3.sh', created: 13},
-      {name: 's1', version: '1', env: 'a=c', url: 'u2.sh', created: 12},
-      {name: 's2', version: '1', env: 'c=d', url: 'u6.sh', created: 11},
-      {name: 's3', version: '1', env: 'a=b&c=d', url: 'u9.sh', created: 11},
-      {name: 's4', version: '1', env: 'a=b&c=d', url: 'u10.sh', created: 11}
-    ], 'registry is as expected')
-    state.stop()
+  hub.on('refresh', () => {
+    t.deepEqual(hub.deployments.serialize(), {
+      1: { id: '1', name: 's1', url: 'u1.sh', created: 11, pkg: { version: '1', env: 'a=b', routes: {}, wrapper: {} } },
+      2: { id: '2', name: 's1', url: 'u2.sh', created: 12, pkg: { version: '1', env: 'a=c', routes: {}, wrapper: {} } },
+      3: { id: '3', name: 's1', url: 'u3.sh', created: 13, pkg: { version: '1', env: 'a=b', routes: {}, wrapper: {} } },
+      4: { id: '4', name: 's1', url: 'u4.sh', created: 21, pkg: { version: '2', env: 'c=d', routes: {}, wrapper: {} } },
+      5: { id: '5', name: 's1', url: 'u5.sh', created: 22, pkg: { version: '2', env: 'a=b&c=d', routes: {}, wrapper: {} } },
+      6: { id: '6', name: 's2', url: 'u6.sh', created: 11, pkg: { version: '1', env: 'c=d', routes: {}, wrapper: {} } },
+      7: { id: '7', name: 's2', url: 'u7.sh', created: 21, pkg: { version: '2', env: 'a=b', routes: {}, wrapper: {} } },
+      8: { id: '8', name: 's2', url: 'u8.sh', created: 22, pkg: { version: '2', env: 'a=b&c=d', routes: {}, wrapper: {} } },
+      9: { id: '9', name: 's3', url: 'u9.sh', created: 11, pkg: { version: '1', env: 'a=b&c=d', routes: {}, wrapper: {} } },
+      10: { id: '10', name: 's4', url: 'u10.sh', created: 11, pkg: { version: '1', env: 'a=b&c=d', routes: {}, wrapper: {} } },
+      99: { id: '99', name: 's10', url: 'u99.sh', created: 11, pkg: {} }
+    }, 'registry is as expected')
+    hub.stop()
     nowApi.restore()
-  }, 500)
+  })
 })
 
 function generateEmitter (data, error) {
   var cbs = {}
 
-  const emitter = {
+  return {
     on (e, cb) {
       cbs[e] = cb
-      return emitter
+      return this
     },
     once (e, cb) {
       cbs[e] = cb
-      return emitter
+      return this
     },
     send () {
       setImmediate(() => {
@@ -147,7 +160,7 @@ function generateEmitter (data, error) {
           cbs.end()
         }
       })
-      return emitter
+      return this
     },
     abort () {
       cbs = {}
@@ -156,6 +169,4 @@ function generateEmitter (data, error) {
 
     }
   }
-
-  return emitter
 }

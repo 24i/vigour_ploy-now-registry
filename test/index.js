@@ -1,3 +1,3 @@
 'use strict'
 
-require('./state')
+require('./hub')

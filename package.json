@@ -34,6 +34,7 @@
     "concurrent-task": "^2.0.0",
     "monotonic-timestamp": "0.0.9",
     "observe-now": "^2.0.0",
+    "proxyquire": "^1.7.10",
     "vigour-stamp": "^1.5.4"
   },
   "devDependencies": {
