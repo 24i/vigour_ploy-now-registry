@@ -8,6 +8,7 @@ const registry = now.deploy(process.cwd(), {
   AMAZON_SECRET: process.env.AMAZON_SECRET
 }, process.env.NOW_TOKEN)
   .on('deployed', () => {
+    console.log(registry.id.compute(), registry.url.compute())
     console.log('Deployed to now, waiting until ready...')
   })
   .on('ready', () => {
