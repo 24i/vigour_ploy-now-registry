@@ -2,11 +2,12 @@
 
 const now = require('observe-now')
 
-const registry = now.deploy(process.cwd(), {
-  NOW_TOKEN: process.env.NOW_TOKEN,
-  AMAZON_ID: process.env.AMAZON_ID,
-  AMAZON_SECRET: process.env.AMAZON_SECRET
-}, process.env.NOW_TOKEN)
+const registry = now.deployment(process.env.NOW_TOKEN)
+  .deploy(process.cwd(), {
+    NOW_TOKEN: process.env.NOW_TOKEN,
+    AMAZON_ID: process.env.AMAZON_ID,
+    AMAZON_SECRET: process.env.AMAZON_SECRET
+  })
   .on('deployed', () => {
     console.log(registry.id.compute(), registry.url.compute())
     console.log('Deployed to now, waiting until ready...')
@@ -21,4 +22,3 @@ const registry = now.deploy(process.cwd(), {
   .on('error', error => {
     console.error('Deployment failed due to error: %j, stack: %s', error, error ? error.stack : '(no stack)')
   })
-  .deploy()
