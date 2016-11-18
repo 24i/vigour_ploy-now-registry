@@ -6,7 +6,8 @@ const registry = now.deployment(process.env.NOW_TOKEN)
   .deploy(process.cwd(), {
     NOW_TOKEN: process.env.NOW_TOKEN,
     AMAZON_ID: process.env.AMAZON_ID,
-    AMAZON_SECRET: process.env.AMAZON_SECRET
+    AMAZON_SECRET: process.env.AMAZON_SECRET,
+    SLACKBOT_HOST: process.env.SLACKBOT_HOST
   })
   .on('deployed', () => {
     console.log(registry.id.compute(), registry.url.compute())
