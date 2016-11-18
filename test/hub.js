@@ -14,7 +14,14 @@ test('list - generate', t => {
       properties: {
         db: {
           define: {
-            load: () => Promise.resolve()
+            load: () => {
+              hub.set({
+                deployments: {
+                  8: { id: 8, name: 's2' }
+                }
+              })
+              return Promise.resolve()
+            }
           }
         }
       }
