@@ -17,7 +17,7 @@ test('list - generate', t => {
             load: () => {
               hub.set({
                 deployments: {
-                  8: { id: 8, name: 's2' }
+                  8: { name: 's2' }
                 }
               })
               return Promise.resolve()
@@ -126,17 +126,17 @@ test('list - generate', t => {
 
   hub.on('refresh', () => {
     t.deepEqual(hub.deployments.serialize(), {
-      1: { id: '1', name: 's1', url: 'u1.sh', created: 11, pkg: { version: '1', env: 'a=b', envName: '', wrapper: {} } },
-      2: { id: '2', name: 's1', url: 'u2.sh', created: 12, pkg: { version: '1', env: 'a=c', envName: '', wrapper: {} } },
-      3: { id: '3', name: 's1', url: 'u3.sh', created: 13, pkg: { version: '1', env: 'a=b', envName: '', wrapper: {} } },
-      4: { id: '4', name: 's1', url: 'u4.sh', created: 21, pkg: { version: '2', env: 'c=d', envName: '', wrapper: {} } },
-      5: { id: '5', name: 's1', url: 'u5.sh', created: 22, pkg: { version: '2', env: 'a=b&c=d', envName: '', wrapper: {} } },
-      6: { id: '6', name: 's2', url: 'u6.sh', created: 11, pkg: { version: '1', env: 'c=d', envName: '', wrapper: {} } },
-      7: { id: '7', name: 's2', url: 'u7.sh', created: 21, pkg: { version: '2', env: 'a=b', envName: '', wrapper: {} } },
-      8: { id: '8', name: 's2', url: 'u8.sh', created: 22, pkg: { version: '2', env: 'a=b&c=d', envName: '', wrapper: {} } },
-      9: { id: '9', name: 's3', url: 'u9.sh', created: 11, pkg: { version: '1', env: 'a=b&c=d', envName: '', wrapper: {} } },
-      10: { id: '10', name: 's4', url: 'u10.sh', created: 11, pkg: { version: '1', env: 'a=b&c=d', envName: '', wrapper: {} } },
-      99: { id: '99', name: 's10', url: 'u99.sh', created: 11, pkg: {} }
+      1: { name: 's1', url: 'u1.sh', created: 11, pkg: { version: '1', env: 'a=b', envName: '', wrapper: {} } },
+      2: { name: 's1', url: 'u2.sh', created: 12, pkg: { version: '1', env: 'a=c', envName: '', wrapper: {} } },
+      3: { name: 's1', url: 'u3.sh', created: 13, pkg: { version: '1', env: 'a=b', envName: '', wrapper: {} } },
+      4: { name: 's1', url: 'u4.sh', created: 21, pkg: { version: '2', env: 'c=d', envName: '', wrapper: {} } },
+      5: { name: 's1', url: 'u5.sh', created: 22, pkg: { version: '2', env: 'a=b&c=d', envName: '', wrapper: {} } },
+      6: { name: 's2', url: 'u6.sh', created: 11, pkg: { version: '1', env: 'c=d', envName: '', wrapper: {} } },
+      7: { name: 's2', url: 'u7.sh', created: 21, pkg: { version: '2', env: 'a=b', envName: '', wrapper: {} } },
+      8: { name: 's2', url: 'u8.sh', created: 22, pkg: { version: '2', env: 'a=b&c=d', envName: '', wrapper: {} } },
+      9: { name: 's3', url: 'u9.sh', created: 11, pkg: { version: '1', env: 'a=b&c=d', envName: '', wrapper: {} } },
+      10: { name: 's4', url: 'u10.sh', created: 11, pkg: { version: '1', env: 'a=b&c=d', envName: '', wrapper: {} } },
+      99: { name: 's10', url: 'u99.sh', created: 11, pkg: {} }
     }, 'registry is as expected')
     hub.stop()
     nowApi.restore()
