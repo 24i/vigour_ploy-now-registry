@@ -1,6 +1,6 @@
 {
   "name": "ploy-now-registry",
-  "version": "2.3.4",
+  "version": "2.3.5",
   "description": "Returns list of existing now deployments with necessary metadata",
   "main": "./lib/index.js",
   "scripts": {
