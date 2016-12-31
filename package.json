@@ -8,6 +8,7 @@
     "watch": "nodemon test | tap-difflet",
     "cover": "istanbul cover --report none --print detail test",
     "travis": "npm run cover -s && istanbul report lcov && ((cat coverage/lcov.info | coveralls) || exit 0) && standard",
+    "dev": "NODE_ENV=dev node bin/server 8080",
     "start": "node bin/server"
   },
   "repository": {
