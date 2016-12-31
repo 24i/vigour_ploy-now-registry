@@ -7,7 +7,6 @@
     "test": "(ducktape; node test) | tap-difflet && standard",
     "watch": "nodemon test | tap-difflet",
     "cover": "istanbul cover --report none --print detail test",
-    "docs": "node_modules/vigour-doc/bin/vdoc",
     "travis": "npm run cover -s && istanbul report lcov && ((cat coverage/lcov.info | coveralls) || exit 0) && standard",
     "start": "node bin/server"
   },
@@ -28,13 +27,11 @@
   },
   "homepage": "https://github.com/vigour-io/ploy-now-registry#readme",
   "dependencies": {
-    "JSONStream": "^1.0.0",
     "blend-state-dynamo": "^3.0.0",
     "brisky-hub": "^1.1.0",
-    "concurrent-task": "^2.0.0",
-    "monotonic-timestamp": "0.0.9",
-    "observe-now": "^2.0.0",
     "vigour-stamp": "^1.5.4"
+    "concurrent-task": "^3.0.0",
+    "observe-now": "^3.0.0",
   },
   "devDependencies": {
     "tape": "^4.4.0",
