@@ -158,7 +158,7 @@ function generateEmitter (data, error) {
     send () {
       setImmediate(() => {
         if (data) {
-          data.forEach(d => cbs['data'](d))
+          data.forEach(d => cbs['response'](d))
         }
         if (error && cbs.error) {
           cbs.error(error)
@@ -172,8 +172,6 @@ function generateEmitter (data, error) {
     abort () {
       cbs = {}
     },
-    remove () {
-
-    }
+    set () {}
   }
 }
