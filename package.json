@@ -32,7 +32,7 @@
     "brisky-hub": "^1.1.0",
     "monotonic-timestamp": "0.0.9",
     "vigour-stamp": "^1.5.4",
-    "concurrent-task": "^3.0.0",
+    "concurrent-task": "^4.0.0",
     "observe-now": "^3.0.0"
   },
   "devDependencies": {
